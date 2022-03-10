@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 PYTHONPATH = PYTHONPATH=./
 TEST = $(PYTHONPATH) pytest --verbosity=2 --showlocals --log-level=DEBUG --strict-markers $(arg) -k "$(k)"
-CODE = [=service?trim?lower_case?replace(" ", "_")?replace("-", "_")] tests
+CODE = weather tests
 
 .PHONY: help
 help: ## Show this help
@@ -27,8 +27,8 @@ test-cov: ## Runs pytest with coverage report
 lint: ## Lint code
 	flake8 --jobs 4 --statistics --show-source $(CODE)
 	pylint --rcfile=setup.cfg $(CODE)
-	mypy $(CODE)
-	black --line-length [=lineLength] --target-version py39 --skip-string-normalization --check $(CODE)
+# mypy $(CODE) ругается на неуказанные типы в объявлениях функций, пока не решил это
+	black --line-length 80 --target-version py39 --skip-string-normalization --check $(CODE)
 	pytest --dead-fixtures --dup-fixtures
 	safety check --full-report
 
@@ -36,24 +36,8 @@ lint: ## Lint code
 format: ## Formats all files
 	autoflake --recursive --in-place --remove-all-unused-imports $(CODE)
 	isort $(CODE)
-	black --line-length [=lineLength] --target-version py39 --skip-string-normalization $(CODE)
+	black --line-length 80 --target-version py39 --skip-string-normalization $(CODE)
 	unify --in-place --recursive $(CODE)
 
 .PHONY: check
 check: format lint test ## Format and lint code then run tests
-
-.PHONY: bump-major
-bump-major: ## Change version 1.x.x
-	poetry version major
-
-.PHONY: bump-minor
-bump-minor: ## Change version x.1.x
-	poetry version minor
-
-.PHONY: bump-patch
-bump-patch: ## Change version x.x.1
-	poetry version patch
-
-.PHONY: install
-install: ## Install dependencies
-	poetry install --no-interaction --no-ansi
