@@ -10,8 +10,11 @@ def read_cache(filename: str, interval: timedelta):
     if not Path(filename).exists():
         return {}
 
-    with open(filename, 'rb') as f:
-        cached_results = pickle.load(f)
+    try:
+        with open(filename, 'rb') as f:
+            cached_results = pickle.load(f)
+    except pickle.PickleError:
+        return {}
 
     return {
         k: v
@@ -21,8 +24,12 @@ def read_cache(filename: str, interval: timedelta):
 
 
 def write_cache(cached_results, filename: str):
-    with open(filename, 'wb') as f:
-        pickle.dump(cached_results, f)
+    try:
+        with open(filename, 'wb') as f:
+            pickle.dump(cached_results, f)
+        return True
+    except pickle.PickleError:
+        return False
 
 
 def timed_cache(

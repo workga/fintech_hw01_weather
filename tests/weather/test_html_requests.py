@@ -5,7 +5,7 @@ from weather import html_requests
 
 
 @pytest.fixture()
-def session_mock(mocker):
+def session_get_mock(mocker):
     return mocker.patch('requests.Session.get')
 
 
@@ -18,22 +18,22 @@ def session_mock(mocker):
         ),
     ],
 )
-def test_get_success(session_mock, text, headers):
-    session_mock.return_value.text = text
-    session_mock.return_value.headers = headers
+def test_get_success(session_get_mock, text, headers):
+    session_get_mock.return_value.text = text
+    session_get_mock.return_value.headers = headers
 
     assert html_requests.get('https://...') == text
 
 
-def test_get_exception_request_failed(session_mock):
-    session_mock.side_effect = RequestException
+def test_get_exception_request_failed(session_get_mock):
+    session_get_mock.side_effect = RequestException
 
     with pytest.raises(RuntimeError):
         html_requests.get('https://...')
 
 
-def test_get_exception_bad_status(session_mock):
-    session_mock.return_value.raise_for_status.side_effect = HTTPError
+def test_get_exception_bad_status(session_get_mock):
+    session_get_mock.return_value.raise_for_status.side_effect = HTTPError
 
     with pytest.raises(RuntimeError):
         html_requests.get('https://...')
@@ -46,8 +46,8 @@ def test_get_exception_bad_status(session_mock):
         # additional wrong options
     ],
 )
-def test_get_exception_content_type(session_mock, headers):
-    session_mock.return_value.headers = headers
+def test_get_exception_content_type(session_get_mock, headers):
+    session_get_mock.return_value.headers = headers
 
     with pytest.raises(RuntimeError):
         html_requests.get('https://...')
