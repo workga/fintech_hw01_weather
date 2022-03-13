@@ -13,6 +13,6 @@ poetry shell
 
 Run application:
 ```bash
-python -m cityname
+python -m weather cityname
 ```
 

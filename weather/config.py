@@ -14,4 +14,4 @@ TAG_ID = 'weather-now-number'
 
 # cache
 CACHE_FILENAME = '.weather.cache'
-CACHE_INTERVAL = timedelta(seconds=5)
+CACHE_INTERVAL = timedelta(minutes=5)

@@ -5,7 +5,7 @@ from weather.config import BASE_URL
 
 
 @cache.timed_cache(['city'])
-def check_weather(city):
+def check_weather(city: str) -> str:
     if not city:
         raise RuntimeError('City is not specified.')
 
